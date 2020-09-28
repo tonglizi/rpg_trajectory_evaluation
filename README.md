@@ -1,5 +1,7 @@
 # rpg_trajectory_evaluation
-
+## Updates
+* 2020.09.28: Add data tool for KITTI dataset, which can convert the groundtruth or estimated poses of KITTI format to the format the toolbox needs.
+----
 This repository implements common used trajectory evaluation methods for visual(-inertial) odometry. Specifically, it includes
 * Different trajectory alignment methods (rigid-body, similarity and yaw-only rotation)
 * Commonly used error metrics: Absolute Trajectory Error (ATE) and Relative/Odometry Error (RE)

@@ -17,7 +17,7 @@ from multiple_traj_errors import MulTrajError
 
 init(autoreset=True)
 rc('font', **{'family': 'serif', 'serif': ['Cardo']})
-rc('text', usetex=True)
+rc('text', usetex=False)
 
 FORMAT = '.pdf'
 
@@ -34,9 +34,9 @@ def analyze_multiple_trials(results_dir, est_type, n_trials,
             suffix = ''
         else:
             suffix = str(trial_i)
-        print(Fore.RED+"### Trial {0} ###".format(trial_i))
+        print(Fore.RED + "### Trial {0} ###".format(trial_i))
 
-        match_base_fn = kNsToMatchFnMapping[est_type]+suffix+'.'+kFnExt
+        match_base_fn = kNsToMatchFnMapping[est_type] + suffix + '.' + kFnExt
 
         if recalculate_errors:
             Trajectory.remove_cached_error(results_dir,
@@ -45,7 +45,7 @@ def analyze_multiple_trials(results_dir, est_type, n_trials,
                                                 match_base_fn)
         traj = Trajectory(
             results_dir, est_type=est_type, suffix=suffix,
-            nm_est=kNsToEstFnMapping[est_type] + suffix + '.'+kFnExt,
+            nm_est=kNsToEstFnMapping[est_type] + suffix + '.' + kFnExt,
             nm_matches=match_base_fn,
             preset_boxplot_distances=preset_boxplot_distances,
             preset_boxplot_percentages=preset_boxplot_percentages)
@@ -132,16 +132,16 @@ if __name__ == '__main__':
           "Going to analyze the results in {0}.".format(args.result_dir))
     print(Fore.YELLOW +
           "Will analyze estimate types: {0}".format(args.est_types))
-    print(Fore.YELLOW + 
+    print(Fore.YELLOW +
           "The plots will saved in {0}.".format(plots_dirs))
     n_trials = 1
     if args.mul_trials:
-        print(Fore.YELLOW + 
+        print(Fore.YELLOW +
               "We will ananlyze multiple trials #{0}".format(args.mul_trials))
         n_trials = args.mul_trials
         if len(args.mul_plot_idx) == 0:
             args.mul_plot_idx = (np.arange(args.mul_trials)).tolist()
-        print(Fore.YELLOW + 
+        print(Fore.YELLOW +
               "We will plot trials {0}.".format(args.mul_plot_idx))
     else:
         args.mul_plot_idx = [0]
@@ -179,7 +179,7 @@ if __name__ == '__main__':
                             plot_traj.align_num_frames)
         plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
         fig.tight_layout()
-        fig.savefig(plot_dir_i+'/trajectory_top' + '_' + plot_traj.align_str +
+        fig.savefig(plot_dir_i + '/trajectory_top' + '_' + plot_traj.align_str +
                     FORMAT, bbox_inches="tight")
 
         fig = plt.figure(figsize=(6, 5.5))
@@ -189,7 +189,7 @@ if __name__ == '__main__':
         pu.plot_trajectory_side(ax, plot_traj.p_gt, 'm', 'Groundtruth')
         plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
         fig.tight_layout()
-        fig.savefig(plot_dir_i+'/trajectory_side' + '_' + plot_traj.align_str +
+        fig.savefig(plot_dir_i + '/trajectory_side' + '_' + plot_traj.align_str +
                     FORMAT, bbox_inches="tight")
 
         fig = plt.figure(figsize=(8, 2.5))
@@ -197,11 +197,11 @@ if __name__ == '__main__':
             111, xlabel='Distance [m]', ylabel='Position Drift [mm]',
             xlim=[0, plot_traj.accum_distances[-1]])
         pu.plot_error_n_dim(ax, plot_traj.accum_distances,
-                            plot_traj.abs_errors['abs_e_trans_vec']*1000,
+                            plot_traj.abs_errors['abs_e_trans_vec'] * 1000,
                             plot_dir_i)
         ax.legend()
         fig.tight_layout()
-        fig.savefig(plot_dir_i+'/translation_error' + '_' + plot_traj.align_str
+        fig.savefig(plot_dir_i + '/translation_error' + '_' + plot_traj.align_str
                     + FORMAT, bbox_inches="tight")
 
         fig = plt.figure(figsize=(8, 2.5))
@@ -210,11 +210,11 @@ if __name__ == '__main__':
             xlim=[0, plot_traj.accum_distances[-1]])
         pu.plot_error_n_dim(
             ax, plot_traj.accum_distances,
-            plot_traj.abs_errors['abs_e_ypr']*180.0/np.pi, plot_dir_i,
+            plot_traj.abs_errors['abs_e_ypr'] * 180.0 / np.pi, plot_dir_i,
             labels=['yaw', 'pitch', 'roll'])
         ax.legend()
         fig.tight_layout()
-        fig.savefig(plot_dir_i+'/rotation_error'+'_'+plot_traj.align_str +
+        fig.savefig(plot_dir_i + '/rotation_error' + '_' + plot_traj.align_str +
                     FORMAT, bbox_inches='tight')
 
         fig = plt.figure(figsize=(8, 2.5))
@@ -227,7 +227,7 @@ if __name__ == '__main__':
             plot_dir_i, colors=['b'], labels=['scale'])
         ax.legend()
         fig.tight_layout()
-        fig.savefig(plot_dir_i+'/scale_error'+'_'+plot_traj.align_str+FORMAT,
+        fig.savefig(plot_dir_i + '/scale_error' + '_' + plot_traj.align_str + FORMAT,
                     bbox_inches='tight')
 
         if args.plot_scale_traj:
@@ -241,21 +241,21 @@ if __name__ == '__main__':
                                       title='Side')
             ax_side.grid(ls='--', color='0.7')
             abs_scale_e = np.abs(
-                np.reshape(plot_traj.abs_errors['abs_e_scale_perc'], (-1, 1)),)
-            color_idx =\
-                (abs_scale_e-np.min(abs_scale_e))/(
-                    np.max(abs_scale_e)-np.min(abs_scale_e))
+                np.reshape(plot_traj.abs_errors['abs_e_scale_perc'], (-1, 1)), )
+            color_idx = \
+                (abs_scale_e - np.min(abs_scale_e)) / (
+                        np.max(abs_scale_e) - np.min(abs_scale_e))
             for idx, val in enumerate(color_idx[:-1]):
                 c = matplotlib.cm.jet(val).flatten()
-                ax_top.plot(plot_traj.p_gt[idx:idx+2, 0],
-                            plot_traj.p_gt[idx:idx+2, 1], color=c)
-                ax_side.plot(plot_traj.p_gt[idx:idx+2, 0],
-                             plot_traj.p_gt[idx:idx+2, 2], color=c)
+                ax_top.plot(plot_traj.p_gt[idx:idx + 2, 0],
+                            plot_traj.p_gt[idx:idx + 2, 1], color=c)
+                ax_side.plot(plot_traj.p_gt[idx:idx + 2, 0],
+                             plot_traj.p_gt[idx:idx + 2, 2], color=c)
             fig.tight_layout()
-            fig.savefig(plot_dir_i+'/scale_error_traj' + '_' +
+            fig.savefig(plot_dir_i + '/scale_error_traj' + '_' +
                         plot_traj.align_str + FORMAT, bbox_inches="tight")
 
-        print(Fore.MAGENTA+">>> Plotting relative (odometry) error...")
+        print(Fore.MAGENTA + ">>> Plotting relative (odometry) error...")
         suffix = ''
         if n_trials > 1:
             suffix = '_mt'
@@ -274,7 +274,7 @@ if __name__ == '__main__':
         pu.boxplot_compare(ax, distances, rel_errors['rel_trans'],
                            labels, colors)
         fig.tight_layout()
-        fig.savefig(plot_dir_i+'/rel_translation_error' + suffix + FORMAT,
+        fig.savefig(plot_dir_i + '/rel_translation_error' + suffix + FORMAT,
                     bbox_inches="tight")
         plt.close(fig)
 
@@ -285,7 +285,7 @@ if __name__ == '__main__':
         pu.boxplot_compare(
             ax, distances, rel_errors['rel_trans_perc'], labels, colors)
         fig.tight_layout()
-        fig.savefig(plot_dir_i+'/rel_translation_error_perc'+suffix+FORMAT,
+        fig.savefig(plot_dir_i + '/rel_translation_error_perc' + suffix + FORMAT,
                     bbox_inches="tight")
         plt.close(fig)
 
@@ -296,13 +296,13 @@ if __name__ == '__main__':
         pu.boxplot_compare(ax, distances, rel_errors['rel_yaw'],
                            labels, colors)
         fig.tight_layout()
-        fig.savefig(plot_dir_i+'/rel_yaw_error' + suffix + FORMAT,
+        fig.savefig(plot_dir_i + '/rel_yaw_error' + suffix + FORMAT,
                     bbox_inches="tight")
         plt.close(fig)
 
         print(Fore.GREEN +
               "#### Done processing error type {0} ####".format(est_type_i))
     import subprocess as s
-    s.call(['notify-send', 'rpg_trajectory_evaluation finished',
-            'results in: {0}'.format(os.path.abspath(args.result_dir))])
 
+    s.call(['notify-send', 'rpg_trajectory_evaluation finished',
+            'results in: {0}'.format(os.path.abspath(args.result_dir))], shell=True)
