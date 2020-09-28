@@ -26,6 +26,7 @@ def quat2dcm(quaternion):
         (q[0, 2] - q[1, 3], q[1, 2] + q[0, 3], 1.0 - q[0, 0] - q[1, 1])),
         dtype=np.float64)
 
+
 def dcm2quat(matrix_3x3):
     """Return quaternion (Hamiltonian, [x y z w]) from rotation matrix.
     This algorithm comes from  "Quaternion Calculus and Fast Animation",
@@ -61,14 +62,19 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='''Analyze trajectories''')
     parser.add_argument('--data-root', type=str, default=' ', help='Kitti odometry dataset folder')
     parser.add_argument('--sequence-idx', type=str, default='09', help='Specify the sequence to be converted')
+    parser.add_argument('--gt', type=str, default='True', help='if False, use estimated poses')
     args = parser.parse_args()
     assert os.path.exists(args.data_root)
 
     # read raw timestamps and poses
     data_root = args.data_root
     sequence_name = args.sequence_idx
+    is_groundtruth=args.gt
     timestamp_file = os.path.join(data_root, 'sequences', sequence_name, 'times.txt')
-    poses_file = os.path.join(data_root, 'poses', '{0}.txt'.format(sequence_name))
+    if is_groundtruth=='True':
+        poses_file = os.path.join(data_root, 'poses', '{0}.txt'.format(sequence_name))
+    else:
+        poses_file = os.path.join(data_root, 'poses', 'est_{0}.txt'.format(sequence_name))
 
     timestamps = np.genfromtxt(timestamp_file).astype(np.float64)
     poses = np.genfromtxt(poses_file).astype(np.float64)
@@ -99,6 +105,9 @@ if __name__ == "__main__":
     out_dir = os.path.join(data_root, 'modified_poses')
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
-    outfn = os.path.join(out_dir, 'kitti_{0}_poses.txt'.format(sequence_name))
+    if is_groundtruth=='True':
+        outfn = os.path.join(out_dir, 'kitti_{0}_poses.txt'.format(sequence_name))
+    else:
+        outfn = os.path.join(out_dir, 'est_kitti_{0}_poses.txt'.format(sequence_name))
     with open(outfn, 'w') as f:
         f.writelines(file_lines)
