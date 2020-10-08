@@ -3,7 +3,7 @@
 # @Author : CaiXin
 # @File : kitti_trajectory_utils.py
 
-'''将kitti数据集的位姿真值转换成toolbox要求的格式'''
+'''将kitti数据集的位姿转换成toolbox要求的格式'''
 import argparse
 import math
 import os
@@ -62,16 +62,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='''Analyze trajectories''')
     parser.add_argument('--data-root', type=str, default=' ', help='Kitti odometry dataset folder')
     parser.add_argument('--sequence-idx', type=str, default='09', help='Specify the sequence to be converted')
-    parser.add_argument('--gt', type=str, default='True', help='if False, use estimated poses')
+    parser.add_argument('--gt', type=str, default='True', help='if false, use estimated poses')
+    parser.add_argument('--out-dir', type=str, default=None, help='to save the trajectory of the modified format')
     args = parser.parse_args()
     assert os.path.exists(args.data_root)
 
     # read raw timestamps and poses
     data_root = args.data_root
     sequence_name = args.sequence_idx
-    is_groundtruth=args.gt
+    is_groundtruth = args.gt
     timestamp_file = os.path.join(data_root, 'sequences', sequence_name, 'times.txt')
-    if is_groundtruth=='True':
+    if is_groundtruth == 'True':
         poses_file = os.path.join(data_root, 'poses', '{0}.txt'.format(sequence_name))
     else:
         poses_file = os.path.join(data_root, 'poses', 'est_{0}.txt'.format(sequence_name))
@@ -102,12 +103,12 @@ if __name__ == "__main__":
                                    str('%e' % quats[i, 2]), ' ',
                                    str('%e' % quats[i, 3]), '\n']))
 
-    out_dir = os.path.join(data_root, 'modified_poses')
+    out_dir = os.path.join('../../kitti', sequence_name)
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
-    if is_groundtruth=='True':
-        outfn = os.path.join(out_dir, 'kitti_{0}_poses.txt'.format(sequence_name))
+    if is_groundtruth == 'True':
+        outfn = os.path.join(out_dir, 'stamped_groundtruth.txt')
     else:
-        outfn = os.path.join(out_dir, 'est_kitti_{0}_poses.txt'.format(sequence_name))
+        outfn = os.path.join(out_dir, 'stamped_traj_estimate.txt')
     with open(outfn, 'w') as f:
         f.writelines(file_lines)
