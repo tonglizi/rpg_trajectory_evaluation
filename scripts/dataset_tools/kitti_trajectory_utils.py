@@ -61,9 +61,11 @@ def dcm2quat(matrix_3x3):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='''Analyze trajectories''')
     parser.add_argument('--data-root', type=str, default=' ', help='Kitti odometry dataset folder')
+    parser.add_argument('--est-root', type=str, default=' ', help='Folder that estimated pose file exists')
     parser.add_argument('--sequence-idx', type=str, default='09', help='Specify the sequence to be converted')
     parser.add_argument('--gt', type=str, default='True', help='if false, use estimated poses')
-    parser.add_argument('--out-dir', type=str, default=None, help='to save the trajectory of the modified format')
+    parser.add_argument('--filename', type=str, default='est_{0}.txt', help='filename of estimated poses, if with "--gt True", ignore this')
+    parser.add_argument('--out-dir', type=str, default='../../kitti/', help='to save the trajectory of the modified format')
     args = parser.parse_args()
     assert os.path.exists(args.data_root)
 
@@ -75,14 +77,14 @@ if __name__ == "__main__":
     if is_groundtruth == 'True':
         poses_file = os.path.join(data_root, 'poses', '{0}.txt'.format(sequence_name))
     else:
-        poses_file = os.path.join(data_root, 'poses', 'est_{0}.txt'.format(sequence_name))
+        poses_file = os.path.join(args.est_root, args.filename)
 
     timestamps = np.genfromtxt(timestamp_file).astype(np.float64)
     poses = np.genfromtxt(poses_file).astype(np.float64)
     transform_matrices = poses.reshape(-1, 3, 4)  # 此时的转换矩阵是3*4的形式
 
     # result cache
-    N = len(timestamps)
+    N = len(timestamps)-1# 此处减1是因为VOLO的输出位姿个数比真值个数少1
     positions = np.zeros([N, 3])
     quats = np.zeros([N, 4])
     for i in range(N):
@@ -103,7 +105,7 @@ if __name__ == "__main__":
                                    str('%e' % quats[i, 2]), ' ',
                                    str('%e' % quats[i, 3]), '\n']))
 
-    out_dir = os.path.join('../../kitti', sequence_name)
+    out_dir = os.path.join(args.out_dir, sequence_name)
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
     if is_groundtruth == 'True':

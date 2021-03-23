@@ -1,3 +1,5 @@
 .idea/
 scripts/__pycache__/
 src/rpg_trajectory_evaluation/__pycache__/
+src/rpg_trajectory_evaluation/*.pyc
+scripts/*.pyc
